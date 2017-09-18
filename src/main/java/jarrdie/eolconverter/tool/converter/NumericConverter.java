@@ -1,6 +1,7 @@
 package jarrdie.eolconverter.tool.converter;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
+import static java.util.Arrays.copyOf;
 import java.util.*;
 
 public class NumericConverter {
@@ -8,7 +9,7 @@ public class NumericConverter {
     private static final char[] hexadecimalDigits = "0123456789ABCDEF".toCharArray();
 
     public static String convertToHexadecimal(byte[] buffer, int length) {
-        byte[] bytes = Arrays.copyOf(buffer, length);
+        byte[] bytes = copyOf(buffer, length);
         return convertToHexadecimal(bytes);
     }
 

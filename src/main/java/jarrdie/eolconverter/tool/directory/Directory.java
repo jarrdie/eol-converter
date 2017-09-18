@@ -1,6 +1,7 @@
 package jarrdie.eolconverter.tool.directory;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
+import jarrdie.eolconverter.tool.file.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -15,8 +16,7 @@ public class Directory {
     }
 
     public static boolean exists(String path) {
-        Path directoryPath = Paths.get(path);
-        return Files.exists(directoryPath);
+        return FileTool.exists(path);
     }
 
     public static void regenerateDirectory(String path) throws Exception {

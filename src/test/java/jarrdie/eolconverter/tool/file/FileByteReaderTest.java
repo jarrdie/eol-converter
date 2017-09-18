@@ -3,8 +3,8 @@ package jarrdie.eolconverter.tool.file;
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import java.io.*;
-import static org.junit.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 public class FileByteReaderTest {
 
@@ -49,6 +49,19 @@ public class FileByteReaderTest {
         assertEquals(9, length);
         String data = convertToHexadecimal(buffer, length);
         assertTrue(data.contains("31 0A 32 0A 33 0A"));
+    }
+
+    @Test
+    public void testHasNext() throws Exception {
+        input = openInput("/123/lf_utf8_bom.bin");
+        byte[] buffer = new byte[2];
+        StringBuffer data = new StringBuffer();
+        while (hasNext(input)) {
+            int length = read(input, buffer);
+            String readData = convertToHexadecimal(buffer, length);
+            data.append(" " + readData);
+        }
+        assertTrue(data.toString().contains("31 0A 32 0A 33 0A"));
     }
 
 }
