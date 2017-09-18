@@ -1,4 +1,4 @@
-package jarrdie.eolconverter.usecase.entity;
+package jarrdie.eolconverter.usecase;
 
 enum EolConversion {
     CR, LF, CRLF

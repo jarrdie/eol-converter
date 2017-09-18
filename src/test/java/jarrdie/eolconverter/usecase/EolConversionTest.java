@@ -1,4 +1,4 @@
-package jarrdie.eolconverter.usecase.entity;
+package jarrdie.eolconverter.usecase;
 
 import static org.junit.Assert.*;
 import org.junit.*;
