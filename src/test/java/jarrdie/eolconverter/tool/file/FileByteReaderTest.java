@@ -19,21 +19,31 @@ public class FileByteReaderTest {
         close(input);
     }
 
+    @Test(expected = Exception.class)
+    public void testOpenInputNull() throws Exception {
+        openInput(null);
+    }
+
+    @Test(expected = Exception.class)
+    public void testOpenInputEmpty() throws Exception {
+        openInput("");
+    }
+
     @Test
-    public void testOpen() throws Exception {
-        input = open("/123/lf_utf8_bom.bin");
+    public void testOpenInput() throws Exception {
+        input = openInput("/123/lf_utf8_bom.bin");
         assertNotNull(input);
     }
 
     @Test
     public void testClose() throws Exception {
-        input = open("/123/lf_utf8_bom.bin");
+        input = openInput("/123/lf_utf8_bom.bin");
         close(input);
     }
 
     @Test
     public void testRead() throws Exception {
-        input = open("/123/lf_utf8_bom.bin");
+        input = openInput("/123/lf_utf8_bom.bin");
         byte[] buffer = new byte[20];
         int length = read(input, buffer);
         assertEquals(9, length);

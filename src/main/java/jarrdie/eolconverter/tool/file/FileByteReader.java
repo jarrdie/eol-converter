@@ -4,9 +4,9 @@ import java.io.*;
 
 public class FileByteReader {
 
-    public static InputStream open(String path) throws Exception {
-        if (path == null) {
-            throw new Exception("Error trying to open an empty file path");
+    public static InputStream openInput(String path) throws Exception {
+        if (path == null || path.length() == 0) {
+            throw new Exception("Error trying to open for reading an empty file path");
         }
         InputStream input = FileByteReader.class.getResourceAsStream(path);
         if (input == null) {
@@ -29,4 +29,5 @@ public class FileByteReader {
         }
         input.close();
     }
+
 }
