@@ -22,24 +22,33 @@ public class NumericConverter {
         }
         int rowLength = 10;
         List<String> hexadecimalData = convertToHexadecimalList(bytes);
+        int size = hexadecimalData.size();
         String data = "";
-        for (int i = 0; i < hexadecimalData.size(); i++) {
-            if (i % rowLength == 0) {
+        for (int i = 0; i < size; i++) {
+            if (_esFinDeFila(i, rowLength)) {
                 data += EOL;
             }
             data += hexadecimalData.get(i);
-            if (i != (hexadecimalData.size() - 1)) {
+            if (!_esFinDeFila(i + 1, rowLength) && !_esFin(i, size)) {
                 data += " ";
             }
         }
         return data;
     }
 
+    private static boolean _esFinDeFila(int i, int rowLength) {
+        return (i != 0) && (i % rowLength == 0);
+    }
+
+    private static boolean _esFin(int i, int size) {
+        return i == (size - 1);
+    }
+
     public static List<String> convertToHexadecimalList(byte[] bytes) {
         if (bytes == null) {
-            return new ArrayList();
+            return new ArrayList<>();
         }
-        List<String> data = new ArrayList();
+        List<String> data = new ArrayList<>();
         char[] characters = new char[2];
         for (int i = 0; i < bytes.length; i++) {
             int v = bytes[i] & 0xFF;

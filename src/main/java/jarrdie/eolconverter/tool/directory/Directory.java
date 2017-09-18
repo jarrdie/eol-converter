@@ -2,17 +2,21 @@ package jarrdie.eolconverter.tool.directory;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import java.io.*;
-import static java.lang.System.*;
 import java.nio.file.*;
 
 public class Directory {
 
-    public static String getProjectBuildPath(String directory) {
-        return "/home/pablo/Compartido/GitHub/eol-converter/build/tmp/" + directory;
+    public static String generateTemporalPath(String directory) {
+        String path = TMP_DIR;
+        if (exists(PROJECT_BUILD_PATH)) {
+            path = PROJECT_BUILD_PATH;
+        }
+        return path + EOF + directory + EOF;
     }
 
-    public static String getTemporalPath(String directory) {
-        return getProperty("java.io.tmpdir") + EOF + directory + EOF;
+    public static boolean exists(String path) {
+        Path directoryPath = Paths.get(path);
+        return Files.exists(directoryPath);
     }
 
     public static void regenerateDirectory(String path) throws Exception {

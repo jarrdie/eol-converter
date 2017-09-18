@@ -30,7 +30,7 @@ public class EolDataConverterTest {
 
     private void _initTestDirectory() throws Exception {
         testsDirectory = "123";
-        temporalDirectory = getProjectBuildPath("eolconverter");
+        temporalDirectory = generateTemporalPath("eolconverter");
         regenerateDirectory(temporalDirectory);
     }
 
