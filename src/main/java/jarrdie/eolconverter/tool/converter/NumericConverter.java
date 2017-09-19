@@ -1,7 +1,8 @@
 package jarrdie.eolconverter.tool.converter;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
-import static java.util.Arrays.copyOf;
+import jarrdie.eolconverter.tool.string.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 public class NumericConverter {
@@ -14,7 +15,10 @@ public class NumericConverter {
     }
 
     public static String convertToHexadecimal(byte[] bytes) {
-        return convertToHexadecimalMatrix(bytes).trim();
+        String data = convertToHexadecimalMatrix(bytes);
+        data = data.replace(EOL, " ");
+        data = data.trim();
+        return data;
     }
 
     public static String convertToHexadecimalMatrix(byte[] bytes) {
@@ -58,6 +62,20 @@ public class NumericConverter {
             data.add(new String(characters));
         }
         return data;
+    }
+
+    public static byte[] convertFromHexadecimal(String data) {
+        if (StringTool.isEmpty(data)) {
+            return new byte[0];
+        }
+        data = data.replace(" ", "");
+        data = data.toUpperCase();
+        byte bytes[] = new byte[data.length() / 2];
+        for (int i = 0; i < data.length(); i += 2) {
+            String hexadecimal = "0x" + data.charAt(i) + data.charAt(i + 1);
+            bytes[i / 2] = (Integer.decode(hexadecimal)).byteValue();
+        }
+        return bytes;
     }
 
 }

@@ -7,8 +7,8 @@ import org.junit.*;
 
 public class EolDataConverterTest {
 
-    private String testsDirectory;
     private String temporalDirectory;
+    private String testsDirectory;
     private String inputFile;
     private String outputFile;
     private FileInputStream inputStream;
@@ -29,9 +29,9 @@ public class EolDataConverterTest {
     }
 
     private void _initTestDirectory() throws Exception {
-        testsDirectory = "123";
         temporalDirectory = generateTemporalPath("eolconverter");
         regenerateDirectory(temporalDirectory);
+        testsDirectory = "123";
     }
 
     private void _initBuffers() throws Exception {
