@@ -26,7 +26,7 @@ public class UTF8 implements Encoding {
 
     @Override
     public byte[] getCrLf() {
-        return convertFromHexadecimal("0D0A");
+        return convertFromHexadecimal("0D 0A");
     }
 
 }
