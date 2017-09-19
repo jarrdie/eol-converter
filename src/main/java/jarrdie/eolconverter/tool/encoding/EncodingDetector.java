@@ -4,7 +4,7 @@ import java.util.*;
 
 public class EncodingDetector {
 
-    public static List<Encoding> encodings = new ArrayList();
+    public static List<Encoding> encodings = new ArrayList<>();
 
     private static void initEncodings() {
         if (encodings.size() > 0) {
