@@ -2,31 +2,31 @@ package jarrdie.eolconverter.tool.encoding;
 
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 
-public class UTF8 implements Encoding {
+public class Utf16le implements Encoding {
 
     @Override
     public String getName() {
-        return "UTF-8";
+        return "UTF-16LE";
     }
 
     @Override
     public byte[] getBom() {
-        return convertFromHexadecimal("EF BB BF");
+        return convertFromHexadecimal("FF FE");
     }
 
     @Override
     public byte[] getCr() {
-        return convertFromHexadecimal("0D");
+        return convertFromHexadecimal("0D 00");
     }
 
     @Override
     public byte[] getLf() {
-        return convertFromHexadecimal("0A");
+        return convertFromHexadecimal("0A 00");
     }
 
     @Override
     public byte[] getCrLf() {
-        return convertFromHexadecimal("0D 0A");
+        return convertFromHexadecimal("0D 00 0A 00");
     }
 
 }

@@ -4,14 +4,14 @@ import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static org.junit.Assert.*;
 import org.junit.*;
 
-public class UTF8Test {
+public class Utf8Test {
 
     private Encoding utf8;
     private byte[] bytes;
 
     @Before
     public void setUp() {
-        utf8 = new UTF8();
+        utf8 = new Utf8();
     }
 
     @After
