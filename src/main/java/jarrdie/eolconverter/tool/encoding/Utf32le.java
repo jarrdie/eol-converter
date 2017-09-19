@@ -2,7 +2,7 @@ package jarrdie.eolconverter.tool.encoding;
 
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 
-public class Utf32Le implements Encoding {
+public class Utf32le implements Encoding {
 
     @Override
     public String getName() {

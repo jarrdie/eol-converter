@@ -20,27 +20,27 @@ public class EolDataConverterTest {
     private EolDataConverter eolConverter;
     private EolConversion eolConversion;
 
-    private void _initDeterministicTests() {
+    private void initDeterministicTests() {
 
     }
 
-    private void _initProbabilisticTests() {
+    private void initProbabilisticTests() {
 
     }
 
-    private void _initTestDirectory() throws Exception {
+    private void initTestDirectory() throws Exception {
         temporalDirectory = generateTemporalPath("eolconverter");
         regenerateDirectory(temporalDirectory);
         testsDirectory = "123";
     }
 
-    private void _initBuffers() throws Exception {
+    private void initBuffers() throws Exception {
         final int blockSize = 1024;
         readBuffer = new byte[blockSize];
         writeBuffer = new byte[4 * blockSize];
     }
 
-    private void _convert() throws Exception {
+    private void convert() throws Exception {
         eolConverter = new EolDataConverter(eolConversion);
         String eol = eolConversion.name().toLowerCase();
         outputFile = inputFile.replace(".bin", "_to_" + eol + ".bin");
@@ -48,13 +48,13 @@ public class EolDataConverterTest {
 
     @Before
     public void setUp() throws Exception {
-        _initTestDirectory();
-        _initBuffers();
+        initTestDirectory();
+        initBuffers();
     }
 
     @After
     public void tearDown() throws Exception {
-        _convert();
+        convert();
         System.out.println(outputFile);
     }
 

@@ -2,8 +2,8 @@ package jarrdie.eolconverter.tool.converter;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import jarrdie.eolconverter.tool.string.*;
-import static java.util.Arrays.*;
 import java.util.*;
+import static java.util.Arrays.*;
 
 public class NumericConverter {
 
@@ -30,22 +30,22 @@ public class NumericConverter {
         int size = hexadecimalData.size();
         String data = "";
         for (int i = 0; i < size; i++) {
-            if (_esFinDeFila(i, rowLength)) {
+            if (esFinDeFila(i, rowLength)) {
                 data += EOL;
             }
             data += hexadecimalData.get(i);
-            if (!_esFinDeFila(i + 1, rowLength) && !_esFin(i, size)) {
+            if (!esFinDeFila(i + 1, rowLength) && !esFin(i, size)) {
                 data += " ";
             }
         }
         return data;
     }
 
-    private static boolean _esFinDeFila(int i, int rowLength) {
+    private static boolean esFinDeFila(int i, int rowLength) {
         return (i != 0) && (i % rowLength == 0);
     }
 
-    private static boolean _esFin(int i, int size) {
+    private static boolean esFin(int i, int size) {
         return i == (size - 1);
     }
 

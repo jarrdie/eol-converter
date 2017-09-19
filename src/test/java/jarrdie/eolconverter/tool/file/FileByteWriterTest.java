@@ -6,8 +6,8 @@ import static jarrdie.eolconverter.tool.directory.Directory.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.file.FileByteWriter.*;
 import java.io.*;
-import static org.junit.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 public class FileByteWriterTest {
 
@@ -56,10 +56,10 @@ public class FileByteWriterTest {
         write(output, "1 2 3".getBytes());
         close(output);
         assertTrue(exists(outputFile));
-        _checkOutput();
+        checkOutput();
     }
 
-    private void _checkOutput() throws Exception {
+    private void checkOutput() throws Exception {
         byte[] buffer = new byte[20];
         InputStream input = openInput(outputFile);
         int length = read(input, buffer);

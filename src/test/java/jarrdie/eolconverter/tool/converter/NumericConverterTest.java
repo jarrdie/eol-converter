@@ -3,7 +3,6 @@ package jarrdie.eolconverter.tool.converter;
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import java.util.*;
-import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
