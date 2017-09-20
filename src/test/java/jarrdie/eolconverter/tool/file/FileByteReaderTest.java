@@ -2,7 +2,9 @@ package jarrdie.eolconverter.tool.file;
 
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
+import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
+import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -17,6 +19,11 @@ public class FileByteReaderTest {
     @After
     public void tearDown() throws Exception {
         close(input);
+    }
+
+    @Test
+    public void testConstructor() throws Exception {
+        testDefaultConstructor(FileByteReaderTest.class);
     }
 
     @Test(expected = Exception.class)
@@ -52,6 +59,11 @@ public class FileByteReaderTest {
     }
 
     @Test
+    public void testReadEmpty() throws Exception {
+        assertEquals(0, read(null, null));
+    }
+
+    @Test
     public void testHasNext() throws Exception {
         input = openInput("/123/lf_utf8_bom.bin");
         byte[] buffer = new byte[2];
@@ -62,6 +74,11 @@ public class FileByteReaderTest {
             data.append(" " + readData);
         }
         assertTrue(data.toString().contains("31 0A 32 0A 33 0A"));
+    }
+
+    @Test
+    public void testHasNextEmpty() throws Exception {
+        assertFalse(hasNext(null));
     }
 
 }

@@ -1,19 +1,10 @@
 package jarrdie.eolconverter.usecase;
 
-import static org.junit.Assert.*;
 import org.junit.*;
 
 public class EolConversionTest {
 
     public EolConversionTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
     }
 
     @Before

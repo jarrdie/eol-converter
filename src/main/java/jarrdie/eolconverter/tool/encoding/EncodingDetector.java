@@ -1,31 +1,29 @@
 package jarrdie.eolconverter.tool.encoding;
 
+import static jarrdie.eolconverter.tool.comparator.ByteComparator.*;
 import java.util.*;
 
 public class EncodingDetector {
 
     public static List<Encoding> encodings = new ArrayList<>();
 
-    private static void initEncodings() {
+    private static void initEncodingsInDetectionOrder() {
         if (encodings.size() > 0) {
             return;
         }
-        addEncoding(new Utf8());
-        addEncoding(new Utf16be());
-        addEncoding(new Utf16le());
         addEncoding(new Utf32be());
         addEncoding(new Utf32le());
+        addEncoding(new Utf16le());
+        addEncoding(new Utf16be());
+        addEncoding(new Utf8());
     }
 
     private static void addEncoding(Encoding encoding) {
-        if (encoding == null) {
-            return;
-        }
         encodings.add(encoding);
     }
 
     public static Encoding detectEncoding(byte[] firstBytes) {
-        initEncodings();
+        initEncodingsInDetectionOrder();
         Encoding encoding = detectEncodingByBom(firstBytes);
         if (encodingFound(encoding)) {
             return encoding;
@@ -38,9 +36,9 @@ public class EncodingDetector {
     }
 
     public static Encoding detectEncodingByBom(byte[] firstBytes) {
-        initEncodings();
+        initEncodingsInDetectionOrder();
         for (Encoding encoding : encodings) {
-            if (Arrays.equals(firstBytes, encoding.getBom())) {
+            if (startsWith(firstBytes, encoding.getBom())) {
                 return encoding;
             }
         }
@@ -48,7 +46,7 @@ public class EncodingDetector {
     }
 
     public static Encoding inferEncodingByContent(byte[] firstBytes) {
-        initEncodings();
+        initEncodingsInDetectionOrder();
         Encoding encoding = new Utf8();  //As stated in the RFC
         //TODO: alternatively, apply a smart set of heuristics
         return encoding;

@@ -1,12 +1,18 @@
 package jarrdie.eolconverter.tool.file;
 
-import static jarrdie.eolconverter.tool.constant.Constant.TMP_DIR;
-import static jarrdie.eolconverter.tool.directory.Directory.exists;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static jarrdie.eolconverter.tool.constant.Constant.*;
+import static jarrdie.eolconverter.tool.directory.Directory.*;
+import static jarrdie.eolconverter.tool.test.TestTool.*;
+import static org.junit.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 public class FileToolTest {
+
+    @Test
+    public void testConstructor() throws Exception {
+        testDefaultConstructor(FileToolTest.class);
+    }
 
     @Test
     public void testExists() {

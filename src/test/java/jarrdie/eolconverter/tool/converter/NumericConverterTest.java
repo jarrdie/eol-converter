@@ -2,9 +2,10 @@ package jarrdie.eolconverter.tool.converter;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
+import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.util.*;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 public class NumericConverterTest {
 
@@ -20,9 +21,25 @@ public class NumericConverterTest {
     }
 
     @Test
-    public void testConvertToHexadecimal() {
+    public void testConstructor() throws Exception {
+        testDefaultConstructor(NumericConverterTest.class);
+    }
+
+    @Test
+    public void testConvertToHexadecimal_byteArr() {
         String data = convertToHexadecimal(bytes);
         assertEquals("31 32 33", data);
+    }
+
+    @Test
+    public void testConvertToHexadecimal_byteArr_int() {
+        String data = convertToHexadecimal(bytes, 2);
+        assertEquals("31 32", data);
+    }
+
+    @Test
+    public void testConvertToHexadecimalEmpty() {
+        assertEquals("", convertToHexadecimal(null));
     }
 
     @Test
@@ -32,6 +49,13 @@ public class NumericConverterTest {
         assertEquals("31", data.get(0));
         assertEquals("32", data.get(1));
         assertEquals("33", data.get(2));
+    }
+
+    @Test
+    public void testConvertToHexadecimalListEmpty() {
+        List data = convertToHexadecimalList(null);
+        assertNotNull(data);
+        assertEquals(0, data.size());
     }
 
     @Test
@@ -51,11 +75,8 @@ public class NumericConverterTest {
     }
 
     @Test
-    public void testConvertToHexadecimal_byteArr_int() {
-    }
-
-    @Test
-    public void testConvertToHexadecimal_byteArr() {
+    public void testConvertToHexadecimalMatrixEmpty() {
+        assertEquals("", convertToHexadecimalMatrix(null));
     }
 
     @Test
@@ -64,6 +85,13 @@ public class NumericConverterTest {
         byte[] bytes = convertFromHexadecimal(hexadecimal);
         String data = convertToHexadecimal(bytes);
         assertEquals(hexadecimal, data);
+    }
+
+    @Test
+    public void testConvertFromHexadecimalEmpty() {
+        byte[] bytes = convertFromHexadecimal(null);
+        assertNotNull(bytes);
+        assertEquals(0, bytes.length);
     }
 
 }

@@ -2,6 +2,7 @@ package jarrdie.eolconverter.tool.directory;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import static jarrdie.eolconverter.tool.directory.Directory.*;
+import static jarrdie.eolconverter.tool.test.TestTool.*;
 import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -18,6 +19,11 @@ public class DirectoryTest {
     @After
     public void tearDown() throws Exception {
         removeDirectory(path);
+    }
+
+    @Test
+    public void testConstructor() throws Exception {
+        testDefaultConstructor(DirectoryTest.class);
     }
 
     @Test

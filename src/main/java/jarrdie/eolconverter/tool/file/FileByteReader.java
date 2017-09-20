@@ -1,6 +1,6 @@
 package jarrdie.eolconverter.tool.file;
 
-import static jarrdie.eolconverter.tool.string.StringTool.isEmpty;
+import static jarrdie.eolconverter.tool.string.StringTool.*;
 import java.io.*;
 
 public class FileByteReader {
@@ -25,6 +25,9 @@ public class FileByteReader {
     }
 
     public static boolean hasNext(InputStream input) throws Exception {
+        if (input == null) {
+            return false;
+        }
         return input.available() > 0;
     }
 

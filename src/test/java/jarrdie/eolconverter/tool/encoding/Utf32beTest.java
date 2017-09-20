@@ -1,6 +1,8 @@
 package jarrdie.eolconverter.tool.encoding;
 
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
+import static jarrdie.eolconverter.tool.test.TestTool.*;
+import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -16,6 +18,11 @@ public class Utf32beTest {
 
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void testConstructor() throws Exception {
+        testDefaultConstructor(Utf32beTest.class);
     }
 
     @Test

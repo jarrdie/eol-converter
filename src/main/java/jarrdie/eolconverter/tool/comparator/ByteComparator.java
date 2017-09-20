@@ -1,11 +1,21 @@
 package jarrdie.eolconverter.tool.comparator;
 
-import static jarrdie.eolconverter.tool.constant.Constant.EOL;
-import static jarrdie.eolconverter.tool.converter.NumericConverter.convertToHexadecimal;
+import static jarrdie.eolconverter.tool.constant.Constant.*;
+import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
+import static java.util.Arrays.*;
 
 public class ByteComparator {
 
-    public static boolean areEqual(byte[] bytes1, byte[] bytes2) throws Exception {
+    public static boolean startsWith(byte[] bytes, byte[] prefix) {
+        if (bytes == null || prefix == null) {
+            return false;
+        }
+        int length = prefix.length;
+        byte[] initBytes = copyOf(bytes, length);
+        return areEqual(initBytes, prefix);
+    }
+
+    public static boolean areEqual(byte[] bytes1, byte[] bytes2) {
         if (bytes1 == null || bytes2 == null) {
             return false;
         }
