@@ -6,6 +6,19 @@ import static java.util.Arrays.*;
 
 public class ByteComparator {
 
+    public static boolean startsWithAny(byte[] bytes, byte[][] prefixes) {
+        if (bytes == null || prefixes == null) {
+            return false;
+        }
+        for (int i = 0; i < prefixes.length; i++) {
+            byte[] prefix = prefixes[i];
+            if (startsWith(bytes, prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean startsWith(byte[] bytes, byte[] prefix) {
         if (bytes == null || prefix == null) {
             return false;

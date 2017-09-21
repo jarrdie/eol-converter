@@ -22,6 +22,12 @@ public class EncodingDetector {
         encodings.add(encoding);
     }
 
+    public static boolean hasBom(byte[] firstBytes) {
+        initEncodingsInDetectionOrder();
+        Encoding encoding = detectEncodingByBom(firstBytes);
+        return encodingFound(encoding);
+    }
+
     public static Encoding detectEncoding(byte[] firstBytes) {
         initEncodingsInDetectionOrder();
         Encoding encoding = detectEncodingByBom(firstBytes);

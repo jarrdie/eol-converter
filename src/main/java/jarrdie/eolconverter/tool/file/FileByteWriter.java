@@ -17,10 +17,17 @@ public class FileByteWriter {
         if (output == null || bytes == null || bytes.length == 0) {
             return;
         }
-        output.write(bytes);
+        write(output, bytes, bytes.length);
     }
 
-    public static void close(OutputStream output) throws Exception {
+    public static void write(OutputStream output, byte[] bytes, int length) throws Exception {
+        if (output == null || bytes == null || bytes.length == 0) {
+            return;
+        }
+        output.write(bytes, 0, length);
+    }
+
+    public static void closeOutput(OutputStream output) throws Exception {
         if (output == null) {
             return;
         }

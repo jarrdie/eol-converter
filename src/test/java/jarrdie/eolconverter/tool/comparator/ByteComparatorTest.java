@@ -2,8 +2,8 @@ package jarrdie.eolconverter.tool.comparator;
 
 import static jarrdie.eolconverter.tool.comparator.ByteComparator.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
-import static org.junit.Assert.*;
 import org.junit.*;
+import static org.junit.Assert.*;
 
 public class ByteComparatorTest {
 
@@ -61,4 +61,17 @@ public class ByteComparatorTest {
         assertFalse(startsWith(null, null));
     }
 
+    @Test
+    public void testStartsWithAny() {
+        byte[][] matrix = new byte[2][];
+        matrix[0] = "123".getBytes();
+        matrix[1] = "456".getBytes();
+        assertTrue(startsWithAny("123456789".getBytes(), matrix));
+        assertFalse(startsWithAny("789".getBytes(), matrix));
+    }
+
+    @Test
+    public void testStartsWithAnyEmpty() {
+        assertFalse(startsWithAny(null, null));
+    }
 }

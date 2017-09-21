@@ -7,7 +7,6 @@ import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.file.FileByteWriter.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
-import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -26,7 +25,7 @@ public class FileByteWriterTest {
 
     @After
     public void tearDown() throws Exception {
-        close(output);
+        closeOutput(output);
         removeDirectory(path);
     }
 
@@ -52,16 +51,16 @@ public class FileByteWriterTest {
     }
 
     @Test
-    public void testClose() throws Exception {
+    public void testCloseOutput() throws Exception {
         output = openOutput(outputFile);
-        close(output);
+        closeOutput(output);
     }
 
     @Test
     public void testWrite() throws Exception {
         output = openOutput(outputFile);
         write(output, "1 2 3".getBytes());
-        close(output);
+        closeOutput(output);
         assertTrue(exists(outputFile));
         checkOutput();
     }
@@ -69,6 +68,7 @@ public class FileByteWriterTest {
     @Test
     public void testWriteEmpty() throws Exception {
         write(null, null);
+        write(null, null, 10);
         assert true;
     }
 

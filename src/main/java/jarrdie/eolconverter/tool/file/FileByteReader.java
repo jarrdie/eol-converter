@@ -31,7 +31,7 @@ public class FileByteReader {
         return input.available() > 0;
     }
 
-    public static void close(InputStream input) throws Exception {
+    public static void closeInput(InputStream input) throws Exception {
         if (input == null) {
             return;
         }

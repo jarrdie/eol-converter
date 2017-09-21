@@ -4,7 +4,6 @@ import static jarrdie.eolconverter.tool.encoding.EncodingDetector.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
-import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -24,8 +23,17 @@ public class EncodingDetectorTest {
         input = openInput(inputFile);
         byte[] buffer = new byte[20];
         read(input, buffer);
+        closeInput(input);
         Encoding detectedEncoding = detectEncoding(buffer);
         assertTrue(expectedEncoding.isInstance(detectedEncoding));
+    }
+
+    private void checkHasBom(String inputFile, boolean hasBom) throws Exception {
+        input = openInput(inputFile);
+        byte[] buffer = new byte[20];
+        read(input, buffer);
+        closeInput(input);
+        assertTrue(hasBom(buffer) == hasBom);
     }
 
     @Test
@@ -77,6 +85,12 @@ public class EncodingDetectorTest {
         //TODO: enhance inference, currently: no bom -> utf8
         checkEncoding("/123/lf_utf16le_no_bom.bin", Utf8.class);
         checkEncoding("/123/lf_utf32le_no_bom.bin", Utf8.class);
+    }
+
+    @Test
+    public void testHasBom() throws Exception {
+        checkHasBom("/123/cr_utf8_bom.bin", true);
+        checkHasBom("/123/lf_utf8_no_bom.bin", false);
     }
 
 }

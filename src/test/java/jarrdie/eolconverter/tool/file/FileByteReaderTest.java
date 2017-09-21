@@ -4,7 +4,6 @@ import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
-import static org.junit.Assert.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -18,7 +17,7 @@ public class FileByteReaderTest {
 
     @After
     public void tearDown() throws Exception {
-        close(input);
+        closeInput(input);
     }
 
     @Test
@@ -43,9 +42,9 @@ public class FileByteReaderTest {
     }
 
     @Test
-    public void testClose() throws Exception {
+    public void testCloseInput() throws Exception {
         input = openInput("/123/lf_utf8_bom.bin");
-        close(input);
+        closeInput(input);
     }
 
     @Test
