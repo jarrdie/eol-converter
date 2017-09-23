@@ -10,6 +10,7 @@ import static jarrdie.eolconverter.tool.file.FileByteWriter.openOutput;
 import static jarrdie.eolconverter.tool.file.FileTool.getFileName;
 import static jarrdie.eolconverter.usecase.EolConversion.*;
 import java.io.*;
+import java.nio.file.*;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
@@ -19,8 +20,6 @@ public class EolDataConverterTest {
     private String outputFile;
     private byte[] inputBuffer;
     private byte[] outputBuffer;
-    private int inputTotalLength;
-    private int outputTotalLength;
 
     @Before
     public void setUp() throws Exception {
@@ -35,9 +34,115 @@ public class EolDataConverterTest {
     @Test
     public void testConvert() throws Exception {
         convert("/123/lf_utf8_bom.bin", CRLF);
-        checkInputLength(9);
-        checkOutputLength(12);
-        checkOutputFile("/123/crlf_utf8_bom.bin");
+        checkEqualsTo("/123/crlf_utf8_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromLfToCr() throws Exception {
+        convert("/123/lf_utf8_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf8_bom.bin");
+
+        convert("/123/lf_utf16le_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf16le_bom.bin");
+
+        convert("/123/lf_utf16be_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf16be_bom.bin");
+
+        convert("/123/lf_utf32le_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf32le_bom.bin");
+
+        convert("/123/lf_utf32be_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf32be_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromLfToCrLf() throws Exception {
+        convert("/123/lf_utf8_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf8_bom.bin");
+
+        convert("/123/lf_utf16le_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf16le_bom.bin");
+
+        convert("/123/lf_utf16be_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf16be_bom.bin");
+
+        convert("/123/lf_utf32le_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf32le_bom.bin");
+
+        convert("/123/lf_utf32be_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf32be_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromCrToLf() throws Exception {
+        convert("/123/cr_utf8_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf8_bom.bin");
+
+        convert("/123/cr_utf16le_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf16le_bom.bin");
+
+        convert("/123/cr_utf16be_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf16be_bom.bin");
+
+        convert("/123/cr_utf32le_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf32le_bom.bin");
+
+        convert("/123/cr_utf32be_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf32be_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromCrToCrLf() throws Exception {
+        convert("/123/cr_utf8_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf8_bom.bin");
+
+        convert("/123/cr_utf16le_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf16le_bom.bin");
+
+        convert("/123/cr_utf16be_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf16be_bom.bin");
+
+        convert("/123/cr_utf32le_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf32le_bom.bin");
+
+        convert("/123/cr_utf32be_bom.bin", CRLF);
+        checkEqualsTo("/123/crlf_utf32be_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromCrLfToLf() throws Exception {
+        convert("/123/crlf_utf8_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf8_bom.bin");
+
+        convert("/123/crlf_utf16le_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf16le_bom.bin");
+
+        convert("/123/crlf_utf16be_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf16be_bom.bin");
+
+        convert("/123/crlf_utf32le_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf32le_bom.bin");
+
+        convert("/123/crlf_utf32be_bom.bin", LF);
+        checkEqualsTo("/123/lf_utf32be_bom.bin");
+    }
+
+    @Test
+    public void testConvertFromCrLfToCr() throws Exception {
+        convert("/123/crlf_utf8_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf8_bom.bin");
+
+        convert("/123/crlf_utf16le_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf16le_bom.bin");
+
+        convert("/123/crlf_utf16be_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf16be_bom.bin");
+
+        convert("/123/crlf_utf32le_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf32le_bom.bin");
+
+        convert("/123/crlf_utf32be_bom.bin", CR);
+        checkEqualsTo("/123/cr_utf32be_bom.bin");
     }
 
     private void initTestDirectory() throws Exception {
@@ -54,12 +159,18 @@ public class EolDataConverterTest {
     private void convert(String inputFile, EolConversion eolConversion) throws Exception {
         EolDataConverter eolDataConverter = new EolDataConverter(eolConversion);
         EolStreamConverter eolStreamConverter = new EolStreamConverter(eolDataConverter, inputBuffer, outputBuffer);
+        copyInputFile(inputFile);
         outputFile = generateOutputFileName(eolConversion, inputFile);
         try (InputStream input = openInput(inputFile);
                 OutputStream output = openOutput(outputFile)) {
             eolStreamConverter.convert(input, output);
-            inputTotalLength = eolStreamConverter.getTotalInputLength();
-            outputTotalLength = eolStreamConverter.getTotalOutputLength();
+        }
+    }
+
+    private void copyInputFile(String inputFile) throws Exception {
+        String inputFileCopy = temporalDirectory + getFileName(inputFile);
+        try (InputStream input = openInput(inputFile)) {
+            Files.copy(input, Paths.get(inputFileCopy));
         }
     }
 
@@ -69,15 +180,7 @@ public class EolDataConverterTest {
         return temporalDirectory + inputFileName.replace(".bin", "_to_" + eol + ".bin");
     }
 
-    private void checkInputLength(int expectedInputTotalLength) {
-        assertEquals(expectedInputTotalLength, inputTotalLength);
-    }
-
-    private void checkOutputLength(int expectedOutputTotalLength) {
-        assertEquals(expectedOutputTotalLength, outputTotalLength);
-    }
-
-    private void checkOutputFile(String equivalentTestFile) throws Exception {
+    private void checkEqualsTo(String equivalentTestFile) throws Exception {
         String testData = readFile(equivalentTestFile);
         String outData = readFile(outputFile);
         assertEquals(testData, outData);
@@ -93,6 +196,14 @@ public class EolDataConverterTest {
         }
         closeInput(input);
         return data.toString();
+    }
+
+    @Test
+    public void testGetOutputData() {
+    }
+
+    @Test
+    public void testGetOutputLength() {
     }
 
 }

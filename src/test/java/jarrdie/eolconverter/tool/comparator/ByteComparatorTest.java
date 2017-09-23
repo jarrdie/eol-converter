@@ -66,12 +66,12 @@ public class ByteComparatorTest {
         byte[][] matrix = new byte[2][];
         matrix[0] = "123".getBytes();
         matrix[1] = "456".getBytes();
-        assertTrue(startsWithAny("123456789".getBytes(), matrix));
-        assertFalse(startsWithAny("789".getBytes(), matrix));
+        assertTrue(isPositiveMatch(startsWithAny("123456789".getBytes(), matrix)));
+        assertFalse(isPositiveMatch(startsWithAny("789".getBytes(), matrix)));
     }
 
     @Test
     public void testStartsWithAnyEmpty() {
-        assertFalse(startsWithAny(null, null));
+        assertFalse(isPositiveMatch(startsWithAny(null, null)));
     }
 }

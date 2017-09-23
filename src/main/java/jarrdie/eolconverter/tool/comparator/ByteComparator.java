@@ -6,17 +6,23 @@ import static java.util.Arrays.*;
 
 public class ByteComparator {
 
-    public static boolean startsWithAny(byte[] bytes, byte[][] prefixes) {
+    private static int NEGATIVE_MATCH = -1;
+
+    public static boolean isPositiveMatch(int matchLength) {
+        return matchLength != NEGATIVE_MATCH;
+    }
+
+    public static int startsWithAny(byte[] bytes, byte[][] prefixes) {
         if (bytes == null || prefixes == null) {
-            return false;
+            return NEGATIVE_MATCH;
         }
         for (int i = 0; i < prefixes.length; i++) {
             byte[] prefix = prefixes[i];
             if (startsWith(bytes, prefix)) {
-                return true;
+                return prefix.length;
             }
         }
-        return false;
+        return NEGATIVE_MATCH;
     }
 
     public static boolean startsWith(byte[] bytes, byte[] prefix) {
