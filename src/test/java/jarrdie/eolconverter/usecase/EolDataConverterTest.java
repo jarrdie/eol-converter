@@ -145,6 +145,12 @@ public class EolDataConverterTest {
         checkEqualsTo("/123/cr_utf32be_bom.bin");
     }
 
+    @Ignore
+    public void testConvertLangsFromCrLfToCr() throws Exception {
+        convert("/langs/crlf_utf16le.bin", CR);
+        checkEqualsTo("/langs/cr_utf16le_bom.bin");
+    }
+
     private void initTestDirectory() throws Exception {
         temporalDirectory = generateTemporalPath("eolconverter");
         regenerateDirectory(temporalDirectory);
