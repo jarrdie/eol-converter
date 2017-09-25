@@ -1,17 +1,14 @@
 package jarrdie.eolconverter.usecase;
 
-import static jarrdie.eolconverter.tool.converter.NumericConverter.convertToHexadecimal;
+import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.directory.Directory.*;
-import static jarrdie.eolconverter.tool.file.FileByteReader.closeInput;
-import static jarrdie.eolconverter.tool.file.FileByteReader.hasNext;
-import static jarrdie.eolconverter.tool.file.FileByteReader.openInput;
-import static jarrdie.eolconverter.tool.file.FileByteReader.read;
-import static jarrdie.eolconverter.tool.file.FileByteWriter.openOutput;
-import static jarrdie.eolconverter.tool.file.FileTool.getFileName;
+import static jarrdie.eolconverter.tool.file.FileByteReader.*;
+import static jarrdie.eolconverter.tool.file.FileByteWriter.*;
+import static jarrdie.eolconverter.tool.file.FileTool.*;
+import static jarrdie.eolconverter.tool.log.SimpleLog.*;
 import static jarrdie.eolconverter.usecase.EolConversion.*;
 import java.io.*;
 import java.nio.file.*;
-import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
 public class EolDataConverterTest {
@@ -20,11 +17,12 @@ public class EolDataConverterTest {
     private String outputFile;
     private byte[] inputBuffer;
     private byte[] outputBuffer;
+    private byte[] checkBuffer;
 
     @Before
     public void setUp() throws Exception {
         initTestDirectory();
-        initBuffers();
+        initBuffers(1024);
     }
 
     @After
@@ -145,10 +143,17 @@ public class EolDataConverterTest {
         checkEqualsTo("/123/cr_utf32be_bom.bin");
     }
 
-    @Ignore
+    @Test
     public void testConvertLangsFromCrLfToCr() throws Exception {
+        initBuffers(16); //For debugging purposes only
         convert("/langs/crlf_utf16le.bin", CR);
-        checkEqualsTo("/langs/cr_utf16le_bom.bin");
+        checkEqualsTo("/langs/cr_utf16le.bin");
+    }
+
+    @Test
+    public void testConvertLangsFromCrLfToLf() throws Exception {
+        convert("/langs/crlf_utf16le.bin", LF);
+        checkEqualsTo("/langs/lf_utf16le.bin");
     }
 
     private void initTestDirectory() throws Exception {
@@ -156,10 +161,10 @@ public class EolDataConverterTest {
         regenerateDirectory(temporalDirectory);
     }
 
-    private void initBuffers() throws Exception {
-        final int blockSize = 1024;
+    private void initBuffers(int blockSize) throws Exception {
         inputBuffer = new byte[blockSize];
         outputBuffer = new byte[4 * blockSize];
+        checkBuffer = new byte[blockSize];
     }
 
     private void convert(String inputFile, EolConversion eolConversion) throws Exception {
@@ -187,21 +192,25 @@ public class EolDataConverterTest {
     }
 
     private void checkEqualsTo(String equivalentTestFile) throws Exception {
-        String testData = readFile(equivalentTestFile);
-        String outData = readFile(outputFile);
-        assertEquals(testData, outData);
-    }
-
-    private String readFile(String file) throws Exception {
-        StringBuffer data = new StringBuffer();
-        InputStream input = openInput(file);
-        while (hasNext(input)) {
-            int length = read(input, inputBuffer);
-            String readData = convertToHexadecimal(inputBuffer, length);
-            data.append(" " + readData);
+        info("Checking results");
+        int block = 0;
+        try (InputStream inputEquivalentData = openInput(equivalentTestFile);
+                InputStream inputOutData = openInput(equivalentTestFile)) {
+            while (hasNext(inputEquivalentData)) {
+                int lentgh = read(inputEquivalentData, inputBuffer);
+                read(inputOutData, checkBuffer);
+                String equivalentData = convertToHexadecimal(inputBuffer, lentgh);
+                String outData = convertToHexadecimal(checkBuffer, lentgh);
+                if (!equivalentData.equals(outData)) {
+                    info("Diferences found at block: " + block);
+                    info("Expected: " + equivalentData);
+                    info("Found: " + outData);
+                    assert false;
+                }
+                block++;
+            }
+            info("Blocks compared: " + block);
         }
-        closeInput(input);
-        return data.toString();
     }
 
     @Test

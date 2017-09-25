@@ -16,4 +16,8 @@ public class SimpleLog {
         log.info(message);
     }
 
+    public static void line() {
+        log.info("--------------------------------------------------------------");
+    }
+
 }

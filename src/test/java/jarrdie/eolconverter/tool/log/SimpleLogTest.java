@@ -6,6 +6,14 @@ import org.junit.*;
 
 public class SimpleLogTest {
 
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
     @Test
     public void testConstructor() throws Exception {
         testDefaultConstructor(SimpleLogTest.class);
@@ -22,6 +30,11 @@ public class SimpleLogTest {
         info(bytes);
 
         info("1234567891011121314151617181920".getBytes());
+    }
+
+    @Test
+    public void testLine() {
+        line();
     }
 
 }
