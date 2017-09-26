@@ -1,9 +1,9 @@
 package jarrdie.eolconverter.usecase;
 
 import static jarrdie.eolconverter.tool.comparator.ByteComparator.*;
-import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.encoding.EncodingDetector.*;
 import jarrdie.eolconverter.tool.encoding.*;
+import static jarrdie.eolconverter.tool.encoding.EncodingDetector.*;
 import static jarrdie.eolconverter.tool.log.SimpleLog.*;
 import static jarrdie.eolconverter.usecase.EolConversion.*;
 
@@ -13,93 +13,73 @@ enum EolConversion {
 
 public class EolDataConverter {
 
-    private int MAXIMUN_BLOCK_LENTGH_TO_REPLACE = 8;
-
-    private boolean isFirst;
+    private boolean isFirstConversion;
 
     private EolConversion eolConversion;
-    private Encoding encoding;
-
     private byte[] finalEol;
+
+    private Encoding encoding;
+    private byte[] bom;
     private byte[][] eolsToFind;
 
     private byte[] block;
-    private int inputCursor = 0;
-    private int outputCursor = 0;
-    private int blockLength = 0;
+    private int blockLength;
+    private int blockMaximumLength;
+
+    private byte[] inputData;
+    private int inputLength;
+    private int inputCursor;
 
     private byte[] outputData;
     private int outputLength;
+    private int outputCursor;
 
     public EolDataConverter(EolConversion eolConversion) {
-        this.isFirst = true;
+        this.isFirstConversion = true;
         this.eolConversion = eolConversion;
         this.encoding = new UnknownEncoding();
-        this.block = new byte[MAXIMUN_BLOCK_LENTGH_TO_REPLACE];
     }
 
     public void convert(byte[] data, int dataLength, byte[] outputData) {
-        init(outputData);
-        if (isFirst) {
-            info("New conversion started with data: " + convertToHexadecimal(data, dataLength));
-            encoding = detectEncoding(data);
-            getEolsFromEncoding();
-            logEols();
-            if (hasBom(data)) {
-                byte[] bom = encoding.getBom();
-                for (int j = 0; j < bom.length; j++) {
-                    outputData[outputCursor++] = bom[j];
-                }
-                inputCursor += bom.length;
-                info("Bom detected and written: " + convertToHexadecimal(bom));
-            }
-            info("Reading blocks of length: " + MAXIMUN_BLOCK_LENTGH_TO_REPLACE);
-            blockLength = encoding.getLf().length;
-            info("With an offset of: " + blockLength);
+        initConversion(data, dataLength, outputData);
+        if (isFirstConversion) {
+            initFirstConversion();
+            detectDataEncoding();
+            initEols();
+            initBlock();
+            processBom();
         }
-        if (finalEol.length == 0) {
+        if (!isWellInitiated()) {
             return;
         }
-        while (inputCursor < dataLength) {
-            line();
-            info("Input cursor at: " + inputCursor);
-            int dataBufferLength = data.length;
-            for (int i = 0; i < MAXIMUN_BLOCK_LENTGH_TO_REPLACE; i++) {
-                int blockCursor = inputCursor + i;
-                if (blockCursor < dataBufferLength) {
-                    block[i] = data[inputCursor + i];
-                }
-            }
-            info("Block read: " + convertToHexadecimal(block));
-            int matchLength = startsWithAny(block, eolsToFind);
-            if (isPositiveMatch(matchLength)) {
-                info("Eol found at the beginnig of the block with length: " + matchLength);
-                for (int j = 0; j < finalEol.length; j++) {
-                    outputData[outputCursor++] = finalEol[j];
-                }
-                inputCursor += matchLength;
-            } else {
-                for (int j = 0; j < blockLength; j++) {
-                    outputData[outputCursor++] = block[j];
-                }
-                inputCursor += blockLength;
-            }
+        while (hasMoreBlocks()) {
+            initBlockRead();
+            readNextBlock();
+            convertBlock();
         }
-        outputLength = outputCursor;
-        info("Data conversion finished with result: " + convertToHexadecimal(outputData, outputLength));
-        isFirst = false;
+        finishConversion();
     }
 
-    private void init(byte[] outputData) {
+    private void initConversion(byte[] data, int dataLength, byte[] outputData) {
         inputCursor = 0;
         outputCursor = 0;
         blockLength = 0;
         finalEol = new byte[0];
         eolsToFind = new byte[2][];
+        inputData = data;
+        inputLength = dataLength;
         this.outputData = outputData;
     }
 
-    private void getEolsFromEncoding() {
+    private void initFirstConversion() {
+        info("New conversion started with data: ", inputData, inputLength);
+    }
+
+    private void detectDataEncoding() {
+        encoding = detectEncoding(inputData);
+    }
+
+    private void initEols() {
         if (eolConversion == LF) {
             finalEol = encoding.getLf();
             eolsToFind[0] = encoding.getCrLf(); //The order is important
@@ -115,13 +95,81 @@ public class EolDataConverter {
             eolsToFind[0] = encoding.getCr();
             eolsToFind[1] = encoding.getLf();
         }
+        for (int i = 0; i < eolsToFind.length; i++) {
+            info("Eol to find: ", eolsToFind[i]);
+        }
+        info("Final Eol: ", finalEol);
     }
 
-    private void logEols() {
-        for (int i = 0; i < eolsToFind.length; i++) {
-            info("Eol to find: " + convertToHexadecimal(eolsToFind[i]));
+    private void initBlock() {
+        blockLength = encoding.getLf().length;
+        info("With an offset of: " + blockLength);
+        blockMaximumLength = encoding.getCrLf().length;
+        info("Reading blocks of length: " + blockMaximumLength);
+        block = new byte[blockMaximumLength];
+    }
+
+    private void processBom() {
+        if (hasBom(inputData)) {
+            bom = encoding.getBom();
+            for (int j = 0; j < bom.length; j++) {
+                outputData[outputCursor++] = bom[j];
+            }
+            inputCursor += bom.length;
+            info("Bom detected and written: ", bom);
         }
-        info("Final Eol: " + convertToHexadecimal(finalEol));
+    }
+
+    private boolean isWellInitiated() {
+        return !isWrongInitiated();
+    }
+
+    private boolean hasMoreBlocks() {
+        return inputCursor < inputLength;
+    }
+
+    private boolean isWrongInitiated() {
+        return finalEol.length == 0 || blockLength <= 0
+                || encoding == null || encoding instanceof UnknownEncoding;
+    }
+
+    private void initBlockRead() {
+        line();
+        info("Input cursor at: " + inputCursor);
+    }
+
+    private void readNextBlock() {
+        for (int i = 0; i < blockMaximumLength; i++) {
+            int blockCursor = inputCursor + i;
+            if (blockCursor < inputData.length) {
+                block[i] = inputData[inputCursor + i];
+            }
+        }
+        info("Block read: ", block);
+    }
+
+    private void convertBlock() {
+        int matchLength = startsWithAny(block, eolsToFind);
+        if (isPositiveMatch(matchLength)) {
+            info("Eol found at the beginnig of the block with length: " + matchLength);
+            writeInOutput(finalEol, finalEol.length);
+            inputCursor += matchLength;
+            return;
+        }
+        writeInOutput(block, blockLength);
+        inputCursor += blockLength;
+    }
+
+    private void writeInOutput(byte[] bytes, int length) {
+        for (int i = 0; i < length; i++) {
+            outputData[outputCursor++] = bytes[i];
+        }
+    }
+
+    private void finishConversion() {
+        outputLength = outputCursor;
+        info("Data conversion finished with result: ", outputData, outputLength);
+        isFirstConversion = false;
     }
 
     public byte[] getOutputData() {

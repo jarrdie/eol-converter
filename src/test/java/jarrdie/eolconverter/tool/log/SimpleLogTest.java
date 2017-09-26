@@ -33,6 +33,16 @@ public class SimpleLogTest {
     }
 
     @Test
+    public void testInfo_String_byteArr() {
+        info("Hex result: ", "123".getBytes());
+    }
+
+    @Test
+    public void testInfo_3args() {
+        info("Hex result: ", "123".getBytes(), 2);
+    }
+
+    @Test
     public void testLine() {
         line();
     }

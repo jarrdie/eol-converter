@@ -5,6 +5,7 @@ import static jarrdie.eolconverter.tool.directory.Directory.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.file.FileByteWriter.*;
 import static jarrdie.eolconverter.tool.file.FileTool.*;
+import jarrdie.eolconverter.tool.log.*;
 import static jarrdie.eolconverter.tool.log.SimpleLog.*;
 import static jarrdie.eolconverter.usecase.EolConversion.*;
 import java.io.*;
@@ -23,6 +24,7 @@ public class EolDataConverterTest {
     public void setUp() throws Exception {
         initTestDirectory();
         initBuffers(1024);
+        SimpleLog.enabled = false;
     }
 
     @After
@@ -144,16 +146,100 @@ public class EolDataConverterTest {
     }
 
     @Test
-    public void testConvertLangsFromCrLfToCr() throws Exception {
+    public void testConvertLangsWithSmallBuffers() throws Exception {
         initBuffers(16); //For debugging purposes only
         convert("/langs/crlf_utf16le.bin", CR);
         checkEqualsTo("/langs/cr_utf16le.bin");
     }
 
     @Test
+    public void testConvertLangsFromLfToCr() throws Exception {
+        convert("/langs/lf_utf8.bin", CR);
+        checkEqualsTo("/langs/cr_utf8.bin");
+
+        convert("/langs/lf_utf16le.bin", CR);
+        checkEqualsTo("/langs/cr_utf16le.bin");
+
+        convert("/langs/lf_utf16be.bin", CR);
+        checkEqualsTo("/langs/cr_utf16be.bin");
+
+        convert("/langs/lf_utf32le.bin", CR);
+        checkEqualsTo("/langs/cr_utf32le.bin");
+    }
+
+    @Test
+    public void testConvertLangsFromLfToCrLf() throws Exception {
+        convert("/langs/lf_utf8.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf8.bin");
+
+        convert("/langs/lf_utf16le.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf16le.bin");
+
+        convert("/langs/lf_utf16be.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf16be.bin");
+
+        convert("/langs/lf_utf32le.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf32le.bin");
+    }
+
+    @Test
+    public void testConvertLangsFromCrToLf() throws Exception {
+        convert("/langs/cr_utf8.bin", LF);
+        checkEqualsTo("/langs/lf_utf8.bin");
+
+        convert("/langs/cr_utf16le.bin", LF);
+        checkEqualsTo("/langs/lf_utf16le.bin");
+
+        convert("/langs/cr_utf16be.bin", LF);
+        checkEqualsTo("/langs/lf_utf16be.bin");
+
+        convert("/langs/cr_utf32le.bin", LF);
+        checkEqualsTo("/langs/lf_utf32le.bin");
+    }
+
+    @Test
+    public void testConvertLangsFromCrToCrLf() throws Exception {
+        convert("/langs/cr_utf8.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf8.bin");
+
+        convert("/langs/cr_utf16le.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf16le.bin");
+
+        convert("/langs/cr_utf16be.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf16be.bin");
+
+        convert("/langs/cr_utf32le.bin", CRLF);
+        checkEqualsTo("/langs/crlf_utf32le.bin");
+    }
+
+    @Test
     public void testConvertLangsFromCrLfToLf() throws Exception {
+        convert("/langs/crlf_utf8.bin", LF);
+        checkEqualsTo("/langs/lf_utf8.bin");
+
         convert("/langs/crlf_utf16le.bin", LF);
         checkEqualsTo("/langs/lf_utf16le.bin");
+
+        convert("/langs/crlf_utf16be.bin", LF);
+        checkEqualsTo("/langs/lf_utf16be.bin");
+
+        convert("/langs/crlf_utf32le.bin", LF);
+        checkEqualsTo("/langs/lf_utf32le.bin");
+    }
+
+    @Test
+    public void testConvertLangsFromCrLfToCr() throws Exception {
+        convert("/langs/crlf_utf8.bin", CR);
+        checkEqualsTo("/langs/cr_utf8.bin");
+
+        convert("/langs/crlf_utf16le.bin", CR);
+        checkEqualsTo("/langs/cr_utf16le.bin");
+
+        convert("/langs/crlf_utf16be.bin", CR);
+        checkEqualsTo("/langs/cr_utf16be.bin");
+
+        convert("/langs/crlf_utf32le.bin", CR);
+        checkEqualsTo("/langs/cr_utf32le.bin");
     }
 
     private void initTestDirectory() throws Exception {
@@ -193,23 +279,31 @@ public class EolDataConverterTest {
 
     private void checkEqualsTo(String equivalentTestFile) throws Exception {
         info("Checking results");
-        int block = 0;
         try (InputStream inputEquivalentData = openInput(equivalentTestFile);
                 InputStream inputOutData = openInput(equivalentTestFile)) {
-            while (hasNext(inputEquivalentData)) {
-                int lentgh = read(inputEquivalentData, inputBuffer);
-                read(inputOutData, checkBuffer);
-                String equivalentData = convertToHexadecimal(inputBuffer, lentgh);
-                String outData = convertToHexadecimal(checkBuffer, lentgh);
-                if (!equivalentData.equals(outData)) {
-                    info("Diferences found at block: " + block);
-                    info("Expected: " + equivalentData);
-                    info("Found: " + outData);
-                    assert false;
-                }
-                block++;
-            }
-            info("Blocks compared: " + block);
+            checkEqualsTo(inputEquivalentData, inputOutData);
+        }
+    }
+
+    private void checkEqualsTo(InputStream inputEquivalentData, InputStream inputOutData) throws Exception {
+        int block = 0;
+        while (hasNext(inputEquivalentData)) {
+            int lentgh = read(inputEquivalentData, inputBuffer);
+            read(inputOutData, checkBuffer);
+            String equivalentData = convertToHexadecimal(inputBuffer, lentgh);
+            String outData = convertToHexadecimal(checkBuffer, lentgh);
+            checkEqualsTo(equivalentData, outData, block);
+            block++;
+        }
+        info("Blocks compared: " + block);
+    }
+
+    private void checkEqualsTo(String equivalentData, String outData, int block) throws Exception {
+        if (!equivalentData.equals(outData)) {
+            info("Diferences found at block: " + block);
+            info("Expected: " + equivalentData);
+            info("Found: " + outData);
+            assert false;
         }
     }
 
