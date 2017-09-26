@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StringTool.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eol-converter</a> &gt; <a href="index.source.html" class="el_package">jarrdie.eolconverter.tool.string</a> &gt; <span class="el_source">StringTool.java</span></div><h1>StringTool.java</h1><pre class="source lang-java linenums">package jarrdie.eolconverter.tool.string;
+
+import static java.util.regex.Pattern.quote;
+
+<span class="fc" id="L5">public class StringTool {</span>
+
+    public static boolean isEmpty(String string) {
+<span class="fc bfc" id="L8" title="All 4 branches covered.">        return string == null || string.length() == 0;</span>
+    }
+
+    public static String[] splitLiteral(String text, String divisor) {
+<span class="pc bpc" id="L12" title="1 of 4 branches missed.">        if (isEmpty(text) || isEmpty(divisor)) {</span>
+<span class="fc" id="L13">            return new String[0];</span>
+        }
+<span class="fc" id="L15">        return text.split(quote(divisor));</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

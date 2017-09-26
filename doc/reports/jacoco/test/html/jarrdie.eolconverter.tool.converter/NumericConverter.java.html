@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumericConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eol-converter</a> &gt; <a href="index.source.html" class="el_package">jarrdie.eolconverter.tool.converter</a> &gt; <span class="el_source">NumericConverter.java</span></div><h1>NumericConverter.java</h1><pre class="source lang-java linenums">package jarrdie.eolconverter.tool.converter;
+
+import static jarrdie.eolconverter.tool.constant.Constant.*;
+import jarrdie.eolconverter.tool.string.*;
+import static java.util.Arrays.*;
+import java.util.*;
+import static java.util.Arrays.*;
+
+<span class="fc" id="L9">public class NumericConverter {</span>
+
+<span class="fc" id="L11">    private static final char[] hexadecimalDigits = &quot;0123456789ABCDEF&quot;.toCharArray();</span>
+
+    public static String convertToHexadecimal(byte[] buffer, int length) {
+<span class="fc" id="L14">        byte[] bytes = copyOf(buffer, length);</span>
+<span class="fc" id="L15">        return convertToHexadecimal(bytes);</span>
+    }
+
+    public static String convertToHexadecimal(byte[] bytes) {
+<span class="fc" id="L19">        String data = convertToHexadecimalMatrix(bytes);</span>
+<span class="fc" id="L20">        data = data.replace(EOL, &quot; &quot;);</span>
+<span class="fc" id="L21">        data = data.trim();</span>
+<span class="fc" id="L22">        return data;</span>
+    }
+
+    public static String convertToHexadecimalMatrix(byte[] bytes) {
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        if (bytes == null) {</span>
+<span class="fc" id="L27">            return &quot;&quot;;</span>
+        }
+<span class="fc" id="L29">        int rowLength = 10;</span>
+<span class="fc" id="L30">        List&lt;String&gt; hexadecimalData = convertToHexadecimalList(bytes);</span>
+<span class="fc" id="L31">        int size = hexadecimalData.size();</span>
+<span class="fc" id="L32">        String data = &quot;&quot;;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (int i = 0; i &lt; size; i++) {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            if (isEndOfLine(i, rowLength)) {</span>
+<span class="fc" id="L35">                data += EOL;</span>
+            }
+<span class="fc" id="L37">            data += hexadecimalData.get(i);</span>
+<span class="fc bfc" id="L38" title="All 4 branches covered.">            if (!isEndOfLine(i + 1, rowLength) &amp;&amp; !isEnd(i, size)) {</span>
+<span class="fc" id="L39">                data += &quot; &quot;;</span>
+            }
+        }
+<span class="fc" id="L42">        return data;</span>
+    }
+
+    private static boolean isEndOfLine(int i, int rowLength) {
+<span class="fc bfc" id="L46" title="All 4 branches covered.">        return (i != 0) &amp;&amp; (i % rowLength == 0);</span>
+    }
+
+    private static boolean isEnd(int i, int size) {
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        return i == (size - 1);</span>
+    }
+
+    public static List&lt;String&gt; convertToHexadecimalList(byte[] bytes) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (bytes == null) {</span>
+<span class="fc" id="L55">            return new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L57">        List&lt;String&gt; data = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L58">        char[] characters = new char[2];</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (int i = 0; i &lt; bytes.length; i++) {</span>
+<span class="fc" id="L60">            int v = bytes[i] &amp; 0xFF;</span>
+<span class="fc" id="L61">            characters[0] = hexadecimalDigits[v &gt;&gt;&gt; 4];</span>
+<span class="fc" id="L62">            characters[1] = hexadecimalDigits[v &amp; 0x0F];</span>
+<span class="fc" id="L63">            data.add(new String(characters));</span>
+        }
+<span class="fc" id="L65">        return data;</span>
+    }
+
+    public static byte[] convertFromHexadecimal(String data) {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (StringTool.isEmpty(data)) {</span>
+<span class="fc" id="L70">            return new byte[0];</span>
+        }
+<span class="fc" id="L72">        data = data.replace(&quot; &quot;, &quot;&quot;);</span>
+<span class="fc" id="L73">        data = data.toUpperCase();</span>
+<span class="fc" id="L74">        byte bytes[] = new byte[data.length() / 2];</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (int i = 0; i &lt; data.length(); i += 2) {</span>
+<span class="fc" id="L76">            String hexadecimal = &quot;0x&quot; + data.charAt(i) + data.charAt(i + 1);</span>
+<span class="fc" id="L77">            bytes[i / 2] = (Integer.decode(hexadecimal)).byteValue();</span>
+        }
+<span class="fc" id="L79">        return bytes;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

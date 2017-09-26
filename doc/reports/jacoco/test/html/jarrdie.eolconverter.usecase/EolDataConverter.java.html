@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EolDataConverter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eol-converter</a> &gt; <a href="index.source.html" class="el_package">jarrdie.eolconverter.usecase</a> &gt; <span class="el_source">EolDataConverter.java</span></div><h1>EolDataConverter.java</h1><pre class="source lang-java linenums">package jarrdie.eolconverter.usecase;
+
+import static jarrdie.eolconverter.tool.comparator.ByteComparator.*;
+import static jarrdie.eolconverter.tool.encoding.EncodingDetector.*;
+import jarrdie.eolconverter.tool.encoding.*;
+import static jarrdie.eolconverter.tool.encoding.EncodingDetector.*;
+import static jarrdie.eolconverter.tool.log.SimpleLog.*;
+import static jarrdie.eolconverter.usecase.EolConversion.*;
+
+<span class="fc" id="L10">enum EolConversion {</span>
+<span class="fc" id="L11">    CR, LF, CRLF</span>
+}
+
+public class EolDataConverter {
+
+    private boolean isFirstConversion;
+
+    private EolConversion eolConversion;
+    private byte[] finalEol;
+
+    private Encoding encoding;
+    private byte[] bom;
+    private byte[][] eolsToFind;
+
+    private byte[] block;
+    private int blockLength;
+    private int blockMaximumLength;
+
+    private byte[] inputData;
+    private int inputLength;
+    private int inputCursor;
+
+    private byte[] outputData;
+    private int outputLength;
+    private int outputCursor;
+
+<span class="fc" id="L37">    public EolDataConverter(EolConversion eolConversion) {</span>
+<span class="fc" id="L38">        this.isFirstConversion = true;</span>
+<span class="fc" id="L39">        this.eolConversion = eolConversion;</span>
+<span class="fc" id="L40">        this.encoding = new UnknownEncoding();</span>
+<span class="fc" id="L41">    }</span>
+
+    public void convert(byte[] data, int dataLength, byte[] outputData) {
+<span class="fc" id="L44">        initConversion(data, dataLength, outputData);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if (isFirstConversion) {</span>
+<span class="fc" id="L46">            initFirstConversion();</span>
+<span class="fc" id="L47">            detectDataEncoding();</span>
+<span class="fc" id="L48">            initEols();</span>
+<span class="fc" id="L49">            initBlock();</span>
+<span class="fc" id="L50">            processBom();</span>
+        }
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (!isWellInitiated()) {</span>
+<span class="fc" id="L53">            return;</span>
+        }
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        while (hasMoreBlocks()) {</span>
+<span class="fc" id="L56">            initBlockRead();</span>
+<span class="fc" id="L57">            readNextBlock();</span>
+<span class="fc" id="L58">            convertBlock();</span>
+        }
+<span class="fc" id="L60">        finishConversion();</span>
+<span class="fc" id="L61">    }</span>
+
+    private void initConversion(byte[] data, int dataLength, byte[] outputData) {
+<span class="fc" id="L64">        inputCursor = 0;</span>
+<span class="fc" id="L65">        outputCursor = 0;</span>
+<span class="fc" id="L66">        blockLength = 0;</span>
+<span class="fc" id="L67">        finalEol = new byte[0];</span>
+<span class="fc" id="L68">        eolsToFind = new byte[2][];</span>
+<span class="fc" id="L69">        inputData = data;</span>
+<span class="fc" id="L70">        inputLength = dataLength;</span>
+<span class="fc" id="L71">        this.outputData = outputData;</span>
+<span class="fc" id="L72">    }</span>
+
+    private void initFirstConversion() {
+<span class="fc" id="L75">        info(&quot;New conversion started with data: &quot;, inputData, inputLength);</span>
+<span class="fc" id="L76">    }</span>
+
+    private void detectDataEncoding() {
+<span class="fc" id="L79">        encoding = detectEncoding(inputData);</span>
+<span class="fc" id="L80">    }</span>
+
+    private void initEols() {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (eolConversion == LF) {</span>
+<span class="fc" id="L84">            finalEol = encoding.getLf();</span>
+<span class="fc" id="L85">            eolsToFind[0] = encoding.getCrLf(); //The order is important</span>
+<span class="fc" id="L86">            eolsToFind[1] = encoding.getCr();</span>
+        }
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (eolConversion == CR) {</span>
+<span class="fc" id="L89">            finalEol = encoding.getCr();</span>
+<span class="fc" id="L90">            eolsToFind[0] = encoding.getCrLf();</span>
+<span class="fc" id="L91">            eolsToFind[1] = encoding.getLf();</span>
+        }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (eolConversion == CRLF) {</span>
+<span class="fc" id="L94">            finalEol = encoding.getCrLf();</span>
+<span class="fc" id="L95">            eolsToFind[0] = encoding.getCr();</span>
+<span class="fc" id="L96">            eolsToFind[1] = encoding.getLf();</span>
+        }
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (int i = 0; i &lt; eolsToFind.length; i++) {</span>
+<span class="fc" id="L99">            info(&quot;Eol to find: &quot;, eolsToFind[i]);</span>
+        }
+<span class="fc" id="L101">        info(&quot;Final Eol: &quot;, finalEol);</span>
+<span class="fc" id="L102">    }</span>
+
+    private void initBlock() {
+<span class="fc" id="L105">        blockLength = encoding.getLf().length;</span>
+<span class="fc" id="L106">        info(&quot;With an offset of: &quot; + blockLength);</span>
+<span class="fc" id="L107">        blockMaximumLength = encoding.getCrLf().length;</span>
+<span class="fc" id="L108">        info(&quot;Reading blocks of length: &quot; + blockMaximumLength);</span>
+<span class="fc" id="L109">        block = new byte[blockMaximumLength];</span>
+<span class="fc" id="L110">    }</span>
+
+    private void processBom() {
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (hasBom(inputData)) {</span>
+<span class="fc" id="L114">            bom = encoding.getBom();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            for (int j = 0; j &lt; bom.length; j++) {</span>
+<span class="fc" id="L116">                outputData[outputCursor++] = bom[j];</span>
+            }
+<span class="fc" id="L118">            inputCursor += bom.length;</span>
+<span class="fc" id="L119">            info(&quot;Bom detected and written: &quot;, bom);</span>
+        }
+<span class="fc" id="L121">    }</span>
+
+    private boolean isWellInitiated() {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        return !isWrongInitiated();</span>
+    }
+
+    private boolean hasMoreBlocks() {
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        return inputCursor &lt; inputLength;</span>
+    }
+
+    private boolean isWrongInitiated() {
+<span class="pc bpc" id="L132" title="3 of 8 branches missed.">        return finalEol.length == 0 || blockLength &lt;= 0</span>
+                || encoding == null || encoding instanceof UnknownEncoding;
+    }
+
+    private void initBlockRead() {
+<span class="fc" id="L137">        line();</span>
+<span class="fc" id="L138">        info(&quot;Input cursor at: &quot; + inputCursor);</span>
+<span class="fc" id="L139">    }</span>
+
+    private void readNextBlock() {
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        for (int i = 0; i &lt; blockMaximumLength; i++) {</span>
+<span class="fc" id="L143">            int blockCursor = inputCursor + i;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">            if (blockCursor &lt; inputData.length) {</span>
+<span class="fc" id="L145">                block[i] = inputData[inputCursor + i];</span>
+            }
+        }
+<span class="fc" id="L148">        info(&quot;Block read: &quot;, block);</span>
+<span class="fc" id="L149">    }</span>
+
+    private void convertBlock() {
+<span class="fc" id="L152">        int matchLength = startsWithAny(block, eolsToFind);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (isPositiveMatch(matchLength)) {</span>
+<span class="fc" id="L154">            info(&quot;Eol found at the beginnig of the block with length: &quot; + matchLength);</span>
+<span class="fc" id="L155">            writeInOutput(finalEol, finalEol.length);</span>
+<span class="fc" id="L156">            inputCursor += matchLength;</span>
+<span class="fc" id="L157">            return;</span>
+        }
+<span class="fc" id="L159">        writeInOutput(block, blockLength);</span>
+<span class="fc" id="L160">        inputCursor += blockLength;</span>
+<span class="fc" id="L161">    }</span>
+
+    private void writeInOutput(byte[] bytes, int length) {
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L165">            outputData[outputCursor++] = bytes[i];</span>
+        }
+<span class="fc" id="L167">    }</span>
+
+    private void finishConversion() {
+<span class="fc" id="L170">        outputLength = outputCursor;</span>
+<span class="fc" id="L171">        info(&quot;Data conversion finished with result: &quot;, outputData, outputLength);</span>
+<span class="fc" id="L172">        isFirstConversion = false;</span>
+<span class="fc" id="L173">    }</span>
+
+    public byte[] getOutputData() {
+<span class="fc" id="L176">        return outputData;</span>
+    }
+
+    public int getOutputLength() {
+<span class="fc" id="L180">        return outputLength;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

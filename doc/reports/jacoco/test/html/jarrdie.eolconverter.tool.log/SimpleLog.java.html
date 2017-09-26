@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleLog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">eol-converter</a> &gt; <a href="index.source.html" class="el_package">jarrdie.eolconverter.tool.log</a> &gt; <span class="el_source">SimpleLog.java</span></div><h1>SimpleLog.java</h1><pre class="source lang-java linenums">package jarrdie.eolconverter.tool.log;
+
+import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
+import java.util.logging.*;
+
+<span class="fc" id="L6">public class SimpleLog {</span>
+
+<span class="fc" id="L8">    public static boolean enabled = true;</span>
+<span class="fc" id="L9">    private static final Logger log = Logger.getLogger(SimpleLog.class.getName());</span>
+
+    public static void info(String message) {
+<span class="fc bfc" id="L12" title="All 2 branches covered.">        if (!enabled) {</span>
+<span class="fc" id="L13">            return;</span>
+        }
+<span class="fc" id="L15">        log.info(message);</span>
+<span class="fc" id="L16">    }</span>
+
+    public static void info(byte[] bytes) {
+<span class="fc" id="L19">        info(&quot;&quot;, bytes, bytes.length);</span>
+<span class="fc" id="L20">    }</span>
+
+    public static void info(String message, byte[] bytes) {
+<span class="fc" id="L23">        info(message, bytes, bytes.length);</span>
+<span class="fc" id="L24">    }</span>
+
+    public static void info(String message, byte[] bytes, int length) {
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (!enabled) {</span>
+<span class="fc" id="L28">            return;</span>
+        }
+<span class="fc" id="L30">        String completeMessage = message + convertToHexadecimal(bytes, length);</span>
+<span class="fc" id="L31">        log.info(completeMessage);</span>
+<span class="fc" id="L32">    }</span>
+
+    public static void line() {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (!enabled) {</span>
+<span class="fc" id="L36">            return;</span>
+        }
+<span class="fc" id="L38">        log.info(&quot;--------------------------------------------------------------&quot;);</span>
+<span class="fc" id="L39">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
