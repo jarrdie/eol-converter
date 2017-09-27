@@ -8,4 +8,4 @@ The supported encodings of the files are: *UTF-8, UTF-16LE, UTF-16BE, UTF-32LE a
 
 ## Scenario
 
-![eol-converter scenario](./img/scenario.png)
+![eol-converter scenario](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/scenario.png)
