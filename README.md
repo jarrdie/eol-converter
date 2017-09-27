@@ -29,3 +29,22 @@ From this point the logic of the converter is simple:
  2. If the block starts with any of the end of lines to replace then write the final end of line to the converted file.
  3. Else, write the block as is.
 
+
+##Statistics
+
+ - 19 classes / 18 test classes
+ - 117 tests
+ - 100% code coverage, 89% branches coverage
+ - 1372 lines of code
+
+
+## Unit Testing
+
+
+![unit-testing](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/unit-testing.png)
+
+## Test Coverage
+
+
+![test-coverage](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/test-coverage.png)
+
