@@ -10,9 +10,9 @@ The following image provides a high level description about how the converter ac
 
 The converter includes the definition of the different end of lines encoded in every UTF format supported. For instance, in UTF-32BE the encoding is as follows:
 
-> CR: `[00 00 00 0D]`
-> LF:  `[00 00 00 0A]`
-> CRLF: `[00 00 00 0D 00 00 00 0A]`
+> CR: `[00 00 00 0D]`  <br>
+> LF:  `[00 00 00 0A]`  <br>
+> CRLF: `[00 00 00 0D 00 00 00 0A]`  <br>
 
 Whenever a new conversion is started, the final end of line is provided, but the concrete bytes to replace cannot be determined until the actual file encoding is defined.
 
@@ -25,7 +25,7 @@ Inferring the codification of a file without a BOM requires moving from a determ
 With the first block of the file, the encoding is detected and the concrete end of line bytes defined. On the one hand, the final end of line is defined, on the other the end of lines to find and replace are grouped. In addition, the maximum length of any of the end of lines considered is calculated, as well as the normal one. The maximum length is use to create the buffer in which the blocks are read, the normal length is used to move forward in the byte stream that comes from the file.
 
 From this point the logic of the converter is simple:
->  1. Read a new block.
+ 1. Read a new block.
  2. If the block starts with any of the end of lines to replace then write the final end of line to the converted file.
  3. Else, write the block as is.
 
