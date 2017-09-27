@@ -41,10 +41,10 @@ From this point the logic of the converter is simple:
 ## Unit Testing
 
 
-![unit-testing](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/unit-testing.png)
+![unit-testing](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/junit.png)
 
 ## Test Coverage
 
 
-![test-coverage](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/test-coverage.png)
+![test-coverage](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/jacoco.png)
 
