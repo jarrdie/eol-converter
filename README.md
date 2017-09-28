@@ -2,11 +2,31 @@
 
 The aim of this project consists in unifying the end of line characters of a set of files. It can deal with the end of lines used in the most typical operating systems: *LF, CR and CRLF*. The supported encodings of the files are: *UTF-8, UTF-16LE, UTF-16BE, UTF-32LE and UTF32-BE*.
 
+## Table of content
+
+- [Installation](#installation)
+- [Scenario](#scenario)
+- [Statistics](#statistics)
+- [Unit Testing](#unit-testing)
+- [Test Coverage](#test-coverage)
+
+## 1) Installation
+
+### JDK
+The converter is developed in Java. The source code requires the Java Development Kit (JDK) version 8 or higher to be compiled and tested. The JDK can be downloaded [here](http://www.oracle.com/technetwork/java/javase/downloads).
+
+### Gradle
+The build tool used to compile, execute the tests and generate the coverage reports is Gradle. Gradle can be downloaded from [here](https://services.gradle.org/distributions/gradle-4.2-bin.zip).
+
+Once Gradle is installed (and the path environment variable is properly set), the converter is built executing the following command in the directory where the eol-converter is downloaded:
+
+    gradle build
+
 ## Scenario
 
 The following image provides a high level description about how the converter actually works.
 
-![scenario](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/scenario.png)
+![Main scenario image](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/scenario.png)
 
 The converter includes the definition of the different end of lines encoded in every UTF format supported. For instance, in UTF-32BE the encoding is as follows:
 
@@ -41,10 +61,10 @@ From this point the logic of the converter is simple:
 ## Unit Testing
 
 
-![unit-testing](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/junit.png)
+![Unit testing summary](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/junit.png)
 
 ## Test Coverage
 
 
-![test-coverage](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/jacoco.png)
+![Test coverage summary](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/jacoco.png)
 
