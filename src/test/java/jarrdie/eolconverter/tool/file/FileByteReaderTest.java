@@ -4,8 +4,8 @@ import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 public class FileByteReaderTest {
 
@@ -60,6 +60,8 @@ public class FileByteReaderTest {
     @Test
     public void testReadEmpty() throws Exception {
         assertEquals(0, read(null, null));
+        assertEquals(0, read(input, null));
+        assertEquals(0, read(input, new byte[0]));
     }
 
     @Test

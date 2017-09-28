@@ -2,8 +2,10 @@ package jarrdie.eolconverter.tool.directory;
 
 import static jarrdie.eolconverter.tool.constant.Constant.*;
 import jarrdie.eolconverter.tool.file.*;
+import static jarrdie.eolconverter.tool.string.StringTool.*;
 import java.io.*;
 import java.nio.file.*;
+import static java.util.Comparator.*;
 
 public class Directory {
 
@@ -12,7 +14,17 @@ public class Directory {
         if (exists(PROJECT_BUILD_PATH)) {
             path = PROJECT_BUILD_PATH;
         }
-        return path + EOF + directory + EOF;
+        if (!endsWithFileSeparator(path)) {
+            path += FS;
+        }
+        return path + directory + FS;
+    }
+
+    public static boolean endsWithFileSeparator(String path) {
+        if (isEmpty(path)) {
+            return false;
+        }
+        return path.endsWith("/") || path.endsWith("\\");
     }
 
     public static boolean exists(String path) {
@@ -25,6 +37,9 @@ public class Directory {
     }
 
     public static void createDirectory(String path) throws Exception {
+        if (exists(path)) {
+            return;
+        }
         Path directoryPath = Paths.get(path);
         Files.createDirectory(directoryPath);
     }
@@ -40,7 +55,7 @@ public class Directory {
     private static void removeDirectoryRecursively(Path directoryPath) throws Exception {
         Files.walk(directoryPath)
                 .map(Path::toFile)
-                .sorted((o1, o2) -> -o1.compareTo(o2))
+                .sorted(reverseOrder())
                 .forEach(File::delete);
     }
 

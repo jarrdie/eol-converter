@@ -16,8 +16,8 @@ public class ConstantTest {
     @Test
     public void testConstants() {
         assertTrue(EOL.equals(LF) || EOL.equals(CR) || EOL.equals(CRLF));
-        assertTrue(EOF.equals("/") || EOL.equals("\\"));
-        assertTrue(TMP_DIR.contains("tmp") || TMP_DIR.contains("temp"));
+        assertTrue(FS.equals("/") || FS.equals("\\"));
+        assertTrue(TMP_DIR.contains("tmp") || TMP_DIR.contains("Temp"));
     }
 
 }

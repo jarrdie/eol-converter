@@ -1,11 +1,11 @@
 package jarrdie.eolconverter.tool.constant;
 
-import static java.io.File.*;
+import java.io.*;
 import static java.lang.System.*;
 
 public class Constant {
 
-    public static String EOF = separator;
+    public static String FS = File.separator;
     public static String LF = "\n";
     public static String CR = "\r";
     public static String CRLF = "\r\n";

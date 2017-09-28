@@ -1,14 +1,14 @@
 package jarrdie.eolconverter.tool.file;
 
-import static jarrdie.eolconverter.tool.constant.Constant.*;
 import static jarrdie.eolconverter.tool.converter.NumericConverter.*;
 import static jarrdie.eolconverter.tool.directory.Directory.*;
 import static jarrdie.eolconverter.tool.file.FileByteReader.*;
 import static jarrdie.eolconverter.tool.file.FileByteWriter.*;
+import static jarrdie.eolconverter.tool.log.SimpleLog.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import java.io.*;
-import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.*;
 
 public class FileByteWriterTest {
 
@@ -19,7 +19,9 @@ public class FileByteWriterTest {
     @Before
     public void setUp() throws Exception {
         path = generateTemporalPath("outdir");
-        outputFile = path + EOF + "testout.bin";
+        outputFile = path + "testout.bin";
+        info(path);
+        info(outputFile);
         regenerateDirectory(path);
     }
 
@@ -68,8 +70,11 @@ public class FileByteWriterTest {
     @Test
     public void testWriteEmpty() throws Exception {
         write(null, null);
-        write(null, null, 10);
-        assert true;
+        write(output, null);
+        write(output, new byte[0]);
+        write(null, null, 0);
+        write(output, null, 0);
+        write(output, new byte[0], 0);
     }
 
     private void checkOutput() throws Exception {

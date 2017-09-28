@@ -5,7 +5,6 @@ import static jarrdie.eolconverter.tool.directory.Directory.*;
 import static jarrdie.eolconverter.tool.test.TestTool.*;
 import static org.junit.Assert.*;
 import org.junit.*;
-import static org.junit.Assert.*;
 
 public class DirectoryTest {
 
@@ -34,9 +33,9 @@ public class DirectoryTest {
 
     @Test
     public void testGenerateTemporalPath() {
-        assertTrue(path.contains("tmp") || path.contains("temp"));
+        assertTrue(path.contains("tmp") || path.contains("Temp"));
         assertTrue(path.contains("testdir"));
-        assertTrue(path.contains(EOF));
+        assertTrue(path.contains(FS));
     }
 
     @Test
@@ -56,8 +55,23 @@ public class DirectoryTest {
     }
 
     @Test
+    public void testCreateExistingDirectory() throws Exception {
+        assertTrue(exists(TMP_DIR));
+        createDirectory(TMP_DIR);
+    }
+
+    @Test
     public void testRemoveDirectory() throws Exception {
         testCreateDirectory();
+    }
+
+    @Test
+    public void testEndsWithFileSeparator() {
+        assertFalse(endsWithFileSeparator(null));
+        assertFalse(endsWithFileSeparator(""));
+        assertTrue(endsWithFileSeparator(FS));
+        assertTrue(endsWithFileSeparator("/"));
+        assertTrue(endsWithFileSeparator("\\"));
     }
 
 }
