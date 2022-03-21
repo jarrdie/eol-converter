@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.8.2'
+    testImplementation 'junit:junit:4.12'
 }
 
 compileJava {
