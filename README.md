@@ -26,7 +26,7 @@ Once Gradle is installed (and the path environment variable is properly set), th
 
 The following image provides a high level description about how the converter actually works.
 
-![Main scenario image](https://raw.githubusercontent.com/jarrdie/eol-converter/master/doc/img/scenario.png)
+![Main scenario image](doc/img/scenario.png)
 
 The converter includes the definition of the different end of lines encoded in every UTF format supported. For instance, in UTF-32BE the encoding is as follows:
 
